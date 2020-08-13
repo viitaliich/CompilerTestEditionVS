@@ -41,8 +41,6 @@ Typespec* typespec_name(const char* name) {
 
 Typespec* typespec_func(Typespec** args, size_t num_args, Typespec* ret) {
 	Typespec* t = typespec_new(TYPESPEC_FUNC);
-	t->func.args = AST_DUP(args);
-	t->func.num_args = num_args;
 	t->func.ret = ret;
 	return t;
 }
@@ -62,10 +60,8 @@ Decl* decl_new(DeclKind kind, const char* name) {
 	return d;
 }
 
-Decl* decl_func(const char* name, FuncParam* params, size_t num_params, Typespec* ret_type, StmtList block) {
+Decl* decl_func(const char* name, Typespec* ret_type, StmtList block) {
 	Decl* d = decl_new(DECL_FUNC, name);
-	d->func.params = AST_DUP(params);
-	d->func.num_params = num_params;
 	d->func.ret_type = ret_type;
 	d->func.block = block;
 	return d;
@@ -96,21 +92,6 @@ Expr* expr_name(const char* name) {
 	return e;
 }
 
-Expr* expr_call(Expr* expr, Expr** args, size_t num_args) {
-	Expr* e = expr_new(EXPR_CALL);
-	e->call.expr = expr;
-	e->call.args = AST_DUP(args);
-	e->call.num_args = num_args;
-	return e;
-}
-
-Expr* expr_field(Expr* expr, const char* name) {
-	Expr* e = expr_new(EXPR_FIELD);
-	e->field.expr = expr;
-	e->field.name = name;
-	return e;
-}
-
 Stmt* stmt_new(StmtKind kind) {
 	Stmt* s = ast_alloc(sizeof(Stmt));
 	s->loc = (SrcLoc){ src_name, src_line };
@@ -127,13 +108,6 @@ Stmt* stmt_return(Expr* expr) {
 Stmt* stmt_block(StmtList block) {
 	Stmt* s = stmt_new(STMT_BLOCK);
 	s->block = block;
-	return s;
-}
-
-Stmt* stmt_init(const char* name, Expr* expr) {
-	Stmt* s = stmt_new(STMT_INIT);
-	s->init.name = name;
-	s->init.expr = expr;
 	return s;
 }
 

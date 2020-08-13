@@ -23,17 +23,10 @@ struct Typespec {
 	union {
 		const char* name;
 		struct {
-			Typespec** args;
-			size_t num_args;
 			Typespec* ret;
 		} func;
 	};
 };
-
-typedef struct FuncParam {
-	const char* name;
-	Typespec* type;
-} FuncParam;
 
 typedef enum DeclKind {
 	DECL_NONE,
@@ -48,8 +41,6 @@ struct Decl {
 	struct Sym* sym;
 	union {
 		struct {
-			FuncParam* params;
-			size_t num_params;
 			Typespec* ret_type;
 			StmtList block;
 		} func;
@@ -66,23 +57,7 @@ typedef enum ExprKind {
 	EXPR_INT,
 	EXPR_FLOAT,
 	EXPR_NAME,
-	EXPR_CALL,
-	EXPR_FIELD,
 } ExprKind;
-
-typedef enum CompoundFieldKind {
-	FIELD_DEFAULT,
-	FIELD_NAME,
-} CompoundFieldKind;
-
-typedef struct CompoundField {
-	CompoundFieldKind kind;
-	Expr* init;
-	union {
-		const char* name;
-		Expr* index;
-	};
-} CompoundField;
 
 struct Expr {
 	ExprKind kind;
@@ -91,19 +66,7 @@ struct Expr {
 	union {
 		int64_t int_val;
 		double float_val;
-		const char* str_val;
 		const char* name;
-		Expr* sizeof_expr;
-		Typespec* sizeof_type;
-		struct {
-			Expr* expr;
-			Expr** args;
-			size_t num_args;
-		} call;
-		struct {
-			Expr* expr;
-			const char* name;
-		} field;
 	};
 };
 
@@ -111,8 +74,7 @@ typedef enum StmtKind {
 	STMT_NONE,
 	STMT_RETURN,
 	STMT_BLOCK,
-	STMT_INIT,
-	STMT_EXPR,
+	STMT_EXPR,x
 } StmtKind;
 
 struct Stmt {

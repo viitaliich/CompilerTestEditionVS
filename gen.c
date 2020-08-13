@@ -54,15 +54,6 @@ char* type_to_cdecl(Type* type, const char* str) {
 
 void gen_expr(Expr* expr);
 
-const char* gen_expr_str(Expr* expr) {
-	char* temp = gen_buf;
-	gen_buf = NULL;
-	gen_expr(expr);
-	const char* result = gen_buf;
-	gen_buf = temp;
-	return result;
-}
-
 char* typespec_to_cdecl(Typespec* typespec, const char* str) {
 	// TODO: Figure out how to handle type vs typespec in C gen for inferred types. How to prevent "flattened" const values?
 	switch (typespec->kind) {
@@ -71,14 +62,6 @@ char* typespec_to_cdecl(Typespec* typespec, const char* str) {
 	case TYPESPEC_FUNC: {
 		char* result = NULL;
 		buf_printf(result, "%s(", cdecl_paren(strf("*%s", str), *str));
-		if (typespec->func.num_args == 0) {
-			buf_printf(result, "void");
-		}
-		else {
-			for (size_t i = 0; i < typespec->func.num_args; i++) {
-				buf_printf(result, "%s%s", i == 0 ? "" : ", ", typespec_to_cdecl(typespec->func.args[i], ""));
-			}
-		}
 		buf_printf(result, ")");
 		return typespec_to_cdecl(typespec->func.ret, result);
 	}
@@ -95,18 +78,6 @@ void gen_func_decl(Decl* decl) {
 	}
 	else {
 		genlnf("void %s(", decl->name);
-	}
-	if (decl->func.num_params == 0) {
-		genf("void");
-	}
-	else {
-		for (size_t i = 0; i < decl->func.num_params; i++) {
-			FuncParam param = decl->func.params[i];
-			if (i != 0) {
-				genf(", ");
-			}
-			genf("%s", typespec_to_cdecl(param.type, param.name));
-		}
 	}
 	genf(")");
 }
@@ -144,21 +115,6 @@ void gen_expr(Expr* expr) {
 	case EXPR_NAME:
 		genf("%s", expr->name);
 		break;
-	case EXPR_CALL:
-		gen_expr(expr->call.expr);
-		genf("(");
-		for (size_t i = 0; i < expr->call.num_args; i++) {
-			if (i != 0) {
-				genf(", ");
-			}
-			gen_expr(expr->call.args[i]);
-		}
-		genf(")");
-		break;
-	case EXPR_FIELD:
-		gen_expr(expr->field.expr);
-		genf(".%s", expr->field.name);
-		break;
 	default:
 		assert(0);
 	}
@@ -180,10 +136,6 @@ void gen_simple_stmt(Stmt* stmt) {
 	switch (stmt->kind) {
 	case STMT_EXPR:
 		gen_expr(stmt->expr);
-		break;
-	case STMT_INIT:
-		genf("%s = ", type_to_cdecl(stmt->init.expr->type, stmt->init.name));
-		gen_expr(stmt->init.expr);
 		break;
 	default:
 		assert(0);

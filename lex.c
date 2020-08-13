@@ -16,8 +16,8 @@ void init_keywords(void) {
 	char* arena_end = intern_arena.end;
 	KEYWORD(return);
 	assert(intern_arena.end == arena_end);
-	first_keyword = func_keyword;  //first_keyword = typedef_keyword;
-	last_keyword = return_keyword;  //last_keyword = default_keyword;
+	first_keyword = func_keyword;
+	last_keyword = return_keyword; 
 	inited = true;
 }
 
@@ -254,29 +254,6 @@ void scan_char(void) {
         stream++; \
         break;
 
-#define CASE2(c1, k1, c2, k2) \
-    case c1: \
-        token.kind = k1; \
-        stream++; \
-        if (*stream == c2) { \
-            token.kind = k2; \
-            stream++; \
-        } \
-        break;
-
-#define CASE3(c1, k1, c2, k2, c3, k3) \
-    case c1: \
-        token.kind = k1; \
-        stream++; \
-        if (*stream == c2) { \
-            token.kind = k2; \
-            stream++; \
-        } else if (*stream == c3) { \
-            token.kind = k3; \
-            stream++; \
-        } \
-        break;
-
 void next_token(void) {
 repeat:								// that's not good ???
 	token.start = stream;
@@ -295,7 +272,7 @@ repeat:								// that's not good ???
 	case '\'':
 		scan_char();
 		break;
-	
+
 	case '.':		// float numbers can start with point			// ???
 		if (isdigit(stream[1])) {
 			scan_float();
@@ -332,17 +309,15 @@ repeat:								// that's not good ???
 		token.name = str_intern_range(token.start, stream);
 		token.kind = is_keyword_name(token.name) ? TOKEN_KEYWORD : TOKEN_NAME;
 		break;
-	
-		CASE1('\0', TOKEN_EOF)
+
+			CASE1('\0', TOKEN_EOF)
 			CASE1('(', TOKEN_LPAREN)
 			CASE1(')', TOKEN_RPAREN)
 			CASE1('{', TOKEN_LBRACE)
 			CASE1('}', TOKEN_RBRACE)
-			
 			CASE1(';', TOKEN_SEMICOLON)
-			
-			CASE1(':', TOKEN_COLON)	//CASE2(':', TOKEN_COLON, '=', TOKEN_COLON_ASSIGN)
-			
+			CASE1(':', TOKEN_COLON)	
+
 	default:
 		syntax_error("Invalid '%c' token, skipping", *stream);
 		stream++;
@@ -352,8 +327,6 @@ repeat:								// that's not good ???
 }
 
 #undef CASE1
-#undef CASE2
-#undef CASE3
 
 void init_stream(const char* name, const char* buf) {
 	stream = buf;

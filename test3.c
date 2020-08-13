@@ -1,7 +1,7 @@
 // Forward declarations
-int main(void);
+int main();
 
 // Ordered declarations
-int main(void) {
+int main() {
     return 2;
 }

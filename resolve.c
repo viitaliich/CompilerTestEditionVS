@@ -255,9 +255,6 @@ Type* resolve_typespec(Typespec* typespec) {
 	}
 	case TYPESPEC_FUNC: {
 		Type** args = NULL;
-		for (size_t i = 0; i < typespec->func.num_args; i++) {
-			buf_push(args, resolve_typespec(typespec->func.args[i]));
-		}
 		Type* ret = type_void;
 		if (typespec->func.ret) {
 			ret = resolve_typespec(typespec->func.ret);
@@ -279,9 +276,6 @@ Sym** ordered_syms;
 Type* resolve_decl_func(Decl* decl) {
 	assert(decl->kind == DECL_FUNC);
 	Type** params = NULL;
-	for (size_t i = 0; i < decl->func.num_params; i++) {
-		buf_push(params, resolve_typespec(decl->func.params[i].type));
-	}
 	Type* ret_type = type_void;
 	if (decl->func.ret_type) {
 		ret_type = resolve_typespec(decl->func.ret_type);
@@ -368,15 +362,6 @@ Sym* resolve_name(const char* name) {
 	return sym;
 }
 
-Operand resolve_expr_field(Expr* expr) {
-	assert(expr->kind == EXPR_FIELD);
-	Operand left = resolve_expr(expr->field.expr);
-	Type* type = left.type;
-	
-	fatal("No field named '%s'", expr->field.name);
-	return operand_null;
-}
-
 Operand resolve_expr_name(Expr* expr) {
 	assert(expr->kind == EXPR_NAME);
 	Sym* sym = resolve_name(expr->name);
@@ -387,25 +372,6 @@ Operand resolve_expr_name(Expr* expr) {
 		fatal("%s must be a var or const", expr->name);
 		return operand_null;
 	}
-}
-
-Operand resolve_expr_call(Expr* expr) {
-	assert(expr->kind == EXPR_CALL);
-	Operand func = resolve_expr(expr->call.expr);
-	if (func.type->kind != TYPE_FUNC) {
-		fatal("Trying to call non-function value");
-	}
-	if (expr->call.num_args != func.type->func.num_params) {
-		fatal("Tried to call function with wrong number of arguments");
-	}
-	for (size_t i = 0; i < expr->call.num_args; i++) {
-		Type* param_type = func.type->func.params[i];
-		Operand arg = resolve_expected_expr(expr->call.args[i], param_type);
-		if (arg.type != param_type) {
-			fatal("Call argument expression type doesn't match expected param type");
-		}
-	}
-	return operand_rvalue(func.type->func.ret);
 }
 
 // Good case for expected types as well. 
@@ -422,9 +388,6 @@ Operand resolve_expected_expr(Expr* expr, Type* expected_type) {
 		break;
 	case EXPR_NAME:
 		result = resolve_expr_name(expr);
-		break;
-	case EXPR_CALL:
-		result = resolve_expr_call(expr);
 		break;
 	default:
 		assert(0);
