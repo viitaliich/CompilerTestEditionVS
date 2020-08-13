@@ -1,23 +1,5 @@
-//const char* typedef_keyword;
-//const char* enum_keyword;
-//const char* struct_keyword;
-//const char* union_keyword;
-//const char* var_keyword;
-//const char* const_keyword;
 const char* func_keyword;
-//const char* sizeof_keyword;
-//const char* cast_keyword;
-//const char* break_keyword;
-//const char* continue_keyword;
 const char* return_keyword;
-//const char* if_keyword;
-//const char* else_keyword;
-//const char* while_keyword;
-//const char* do_keyword;
-//const char* for_keyword;
-//const char* switch_keyword;
-//const char* case_keyword;
-//const char* default_keyword;
 
 const char* first_keyword;
 const char* last_keyword;
@@ -52,63 +34,12 @@ typedef enum TokenKind {
 	TOKEN_RPAREN,
 	TOKEN_LBRACE,
 	TOKEN_RBRACE,
-	//TOKEN_LBRACKET,
-	//TOKEN_RBRACKET,
-	//TOKEN_COMMA,
 	TOKEN_DOT,
-	//TOKEN_QUESTION,
 	TOKEN_SEMICOLON,
 	TOKEN_KEYWORD,
 	TOKEN_INT,
 	TOKEN_FLOAT,
-	//TOKEN_STR,
 	TOKEN_NAME,
-	//TOKEN_NEG,
-	//TOKEN_NOT,
-	// Multiplicative precedence
-	//TOKEN_FIRST_MUL,
-	//TOKEN_MUL = TOKEN_FIRST_MUL,
-	//TOKEN_DIV,
-	//TOKEN_MOD,
-	//TOKEN_AND,
-	//TOKEN_LSHIFT,
-	//TOKEN_RSHIFT,
-	//TOKEN_LAST_MUL = TOKEN_RSHIFT,
-	// Additive precedence
-	//TOKEN_FIRST_ADD,
-	//TOKEN_ADD = TOKEN_FIRST_ADD,
-	//TOKEN_SUB,
-	//TOKEN_XOR,
-	//TOKEN_OR,
-	//TOKEN_LAST_ADD = TOKEN_OR,
-	// Comparative precedence
-	//TOKEN_FIRST_CMP,
-	//TOKEN_EQ = TOKEN_FIRST_CMP,
-	//TOKEN_NOTEQ,
-	//TOKEN_LT,
-	//TOKEN_GT,
-	//TOKEN_LTEQ,
-	//TOKEN_GTEQ,
-	//TOKEN_LAST_CMP = TOKEN_GTEQ,
-	//TOKEN_AND_AND,
-	//TOKEN_OR_OR,
-	// Assignment operators
-	//TOKEN_FIRST_ASSIGN,
-	//TOKEN_ASSIGN = TOKEN_FIRST_ASSIGN,
-	//TOKEN_ADD_ASSIGN,
-	//TOKEN_SUB_ASSIGN,
-	//TOKEN_OR_ASSIGN,
-	//TOKEN_AND_ASSIGN,
-	//TOKEN_XOR_ASSIGN,
-	//TOKEN_LSHIFT_ASSIGN,
-	//TOKEN_RSHIFT_ASSIGN,
-	//TOKEN_MUL_ASSIGN,
-	//TOKEN_DIV_ASSIGN,
-	//TOKEN_MOD_ASSIGN,
-	//TOKEN_LAST_ASSIGN = TOKEN_MOD_ASSIGN,
-	//TOKEN_INC,
-	//TOKEN_DEC,
-	//TOKEN_COLON_ASSIGN,
 } TokenKind;
 
 typedef enum TokenMod {
@@ -126,51 +57,13 @@ const char* token_kind_names[] = {
 	[TOKEN_RPAREN] = ")",
 	[TOKEN_LBRACE] = "{",
 	[TOKEN_RBRACE] = "}",
-	//[TOKEN_LBRACKET] = "[",
-	//[TOKEN_RBRACKET] = "]",
-	//[TOKEN_COMMA] = ",",
 	[TOKEN_DOT] = ".",
-	//[TOKEN_QUESTION] = "?",
 	[TOKEN_SEMICOLON] = ";",
 	[TOKEN_KEYWORD] = "keyword",
 	[TOKEN_INT] = "int",
 	[TOKEN_FLOAT] = "float",
-	//[TOKEN_STR] = "string",
 	[TOKEN_NAME] = "name",
-	//[TOKEN_MUL] = "*",
-	//[TOKEN_DIV] = "/",
-	//[TOKEN_MOD] = "%",
-	//[TOKEN_AND] = "&",
-	//[TOKEN_LSHIFT] = "<<",
-	//[TOKEN_RSHIFT] = ">>",
-	//[TOKEN_ADD] = "+",
-	//[TOKEN_SUB] = "-",
-	//[TOKEN_OR] = "|",
-	//[TOKEN_XOR] = "^",
-	//[TOKEN_EQ] = "==",
-	//[TOKEN_NOTEQ] = "!=",
-	//[TOKEN_LT] = "<",
-	//[TOKEN_GT] = ">",
-	//[TOKEN_LTEQ] = "<=",
-	//[TOKEN_GTEQ] = ">=",
-	//[TOKEN_AND_AND] = "&&",
-	//[TOKEN_OR_OR] = "||",
-	//[TOKEN_ASSIGN] = "=",
-	//[TOKEN_ADD_ASSIGN] = "+=",
-	//[TOKEN_SUB_ASSIGN] = "-=",
-	//[TOKEN_OR_ASSIGN] = "|=",
-	//[TOKEN_AND_ASSIGN] = "&=",
-	//[TOKEN_XOR_ASSIGN] = "^=",
-	//[TOKEN_MUL_ASSIGN] = "*=",
-	//[TOKEN_DIV_ASSIGN] = "/=",
-	//[TOKEN_MOD_ASSIGN] = "%=",
-	//[TOKEN_LSHIFT_ASSIGN] = "<<=",
-	//[TOKEN_RSHIFT_ASSIGN] = ">>=",
-	//[TOKEN_INC] = "++",
-	//[TOKEN_DEC] = "--",
-	//[TOKEN_COLON_ASSIGN] = ":=",
 };
-
 
 const char* token_kind_name(TokenKind kind) {
 	if (kind < sizeof(token_kind_names) / sizeof(*token_kind_names)) {	// ???
@@ -181,8 +74,6 @@ const char* token_kind_name(TokenKind kind) {
 	}
 }
 
-
-
 typedef struct Token {
 	TokenKind kind;
 	TokenMod mod;
@@ -191,11 +82,9 @@ typedef struct Token {
 	union {
 		int64_t int_val;
 		double float_val;
-		//const char* str_val;
 		const char* name;
 	};
 } Token;
-
 
 Token token;	// global token, corresponds to the current token.
 const char* stream;
@@ -354,38 +243,6 @@ void scan_char(void) {
 	token.mod = TOKENMOD_CHAR;
 }
 
-//void scan_str(void) {
-//	assert(*stream == '"');
-//	stream++;
-//	char* str = NULL;
-//	while (*stream && *stream != '"') {
-//		char val = *stream;
-//		if (val == '\n') {
-//			syntax_error("String literal cannot contain newline");
-//			break;
-//		}
-//		else if (val == '\\') {
-//			stream++;
-//			val = escape_to_char[*(unsigned char*)stream];
-//			if (val == 0 && *stream != '0') {
-//				syntax_error("Invalid string literal escape '\\%c'", *stream);
-//			}
-//		}
-//		buf_push(str, val);
-//		stream++;
-//	}
-//	if (*stream) {
-//		assert(*stream == '"');
-//		stream++;
-//	}
-//	else {
-//		syntax_error("Unexpected end of file within string literal");
-//	}
-//	buf_push(str, 0);		// why not \0 ???
-//	token.kind = TOKEN_STR;
-//	token.str_val = str;
-//}
-
 // These macros are very localised and not really reusable. 
 // They are intrnded for a very specific purpose. 
 // So they are pretty straightforward in a sence of syntax. 
@@ -438,9 +295,7 @@ repeat:								// that's not good ???
 	case '\'':
 		scan_char();
 		break;
-	//case '"':
-	//	scan_str();
-	//	break;
+	
 	case '.':		// float numbers can start with point			// ???
 		if (isdigit(stream[1])) {
 			scan_float();
@@ -477,76 +332,17 @@ repeat:								// that's not good ???
 		token.name = str_intern_range(token.start, stream);
 		token.kind = is_keyword_name(token.name) ? TOKEN_KEYWORD : TOKEN_NAME;
 		break;
-	//case '<':
-	//	token.kind = TOKEN_LT;
-	//	stream++;
-	//	if (*stream == '<') {
-	//		token.kind = TOKEN_LSHIFT;
-	//		stream++;
-	//		if (*stream == '=') {
-	//			token.kind = TOKEN_LSHIFT_ASSIGN;
-	//			stream++;
-	//		}
-	//	}
-	//	else if (*stream == '=') {
-	//		token.kind = TOKEN_LTEQ;
-	//		stream++;
-	//	}
-	//	break;
-	//case '>':
-	//	token.kind = TOKEN_GT;
-	//	stream++;
-	//	if (*stream == '>') {
-	//		token.kind = TOKEN_RSHIFT;
-	//		stream++;
-	//		if (*stream == '=') {
-	//			token.kind = TOKEN_RSHIFT_ASSIGN;
-	//			stream++;
-	//		}
-	//	}
-	//	else if (*stream == '=') {
-	//		token.kind = TOKEN_GTEQ;
-	//		int x = 0;
-	//		x |= 1;
-	//		stream++;
-	//	}
-	//	break;
-	//case '/':
-	//	token.kind = TOKEN_DIV;
-	//	stream++;
-	//	if (*stream == '=') {
-	//		token.kind = TOKEN_DIV_ASSIGN;
-	//		stream++;
-	//	}
-	//	else if (*stream == '/') {
-	//		stream++;
-	//		while (*stream && *stream != '\n') {
-	//			stream++;
-	//		}
-	//		goto repeat;
-	//	}
-	//	break;
+	
 		CASE1('\0', TOKEN_EOF)
 			CASE1('(', TOKEN_LPAREN)
 			CASE1(')', TOKEN_RPAREN)
 			CASE1('{', TOKEN_LBRACE)
 			CASE1('}', TOKEN_RBRACE)
-			//CASE1('[', TOKEN_LBRACKET)
-			//CASE1(']', TOKEN_RBRACKET)
-			//CASE1(',', TOKEN_COMMA)
-			//CASE1('?', TOKEN_QUESTION)
+			
 			CASE1(';', TOKEN_SEMICOLON)
-			//CASE1('~', TOKEN_NEG)
-			//CASE1('!', TOKEN_NOT)
+			
 			CASE1(':', TOKEN_COLON)	//CASE2(':', TOKEN_COLON, '=', TOKEN_COLON_ASSIGN)
-			//CASE2('=', TOKEN_ASSIGN, '=', TOKEN_EQ)
-			//CASE2('^', TOKEN_XOR, '=', TOKEN_XOR_ASSIGN)
-			//CASE2('*', TOKEN_MUL, '=', TOKEN_MUL_ASSIGN)
-			//CASE2('%', TOKEN_MOD, '=', TOKEN_MOD_ASSIGN)
-			//CASE3('+', TOKEN_ADD, '=', TOKEN_ADD_ASSIGN, '+', TOKEN_INC)
-			//CASE3('-', TOKEN_SUB, '=', TOKEN_SUB_ASSIGN, '-', TOKEN_DEC)
-			//CASE3('&', TOKEN_AND, '=', TOKEN_AND_ASSIGN, '&', TOKEN_AND_AND)
-			//CASE3('|', TOKEN_OR, '=', TOKEN_OR_ASSIGN, '|', TOKEN_OR_OR)
+			
 	default:
 		syntax_error("Invalid '%c' token, skipping", *stream);
 		stream++;
@@ -570,7 +366,6 @@ void init_stream(const char* name, const char* buf) {
 bool is_token(TokenKind kind) {
 	return token.kind == kind;
 }
-
 
 bool is_token_eof(void) {
 	return token.kind == TOKEN_EOF;
@@ -631,71 +426,6 @@ void keyword_test(void) {
 #define assert_token_float(x) assert(token.float_val == (x) && match_token(TOKEN_FLOAT))
 #define assert_token_str(x) assert(strcmp(token.str_val, (x)) == 0 && match_token(TOKEN_STR))
 #define assert_token_eof() assert(is_token(0))
-
-
-//void lex_test(void) {
-//	keyword_test();
-//	assert(str_intern("func") == func_keyword);
-//
-//	// Integer literal tests
-//	init_stream(NULL, "0 18446744073709551615 0xffffffffffffffff 042 0b1111");
-//	assert_token_int(0);
-//	assert_token_int(18446744073709551615ull);
-//	assert(token.mod == TOKENMOD_HEX);
-//	assert_token_int(0xffffffffffffffffull);
-//	assert(token.mod == TOKENMOD_OCT);
-//	assert_token_int(042);
-//	assert(token.mod == TOKENMOD_BIN);
-//	assert_token_int(0xF);
-//	assert_token_eof();
-//
-//	// Float literal tests
-//	init_stream(NULL, "3.14 .123 42. 3e10");
-//	assert_token_float(3.14);
-//	assert_token_float(.123);
-//	assert_token_float(42.);
-//	assert_token_float(3e10);
-//	assert_token_eof();
-//
-//	// Char literal tests
-//	init_stream(NULL, "'a' '\\n'");
-//	assert_token_int('a');
-//	assert_token_int('\n');
-//	assert_token_eof();
-//
-//	// String literal tests
-//	init_stream(NULL, "\"foo\" \"a\\nb\"");
-//	assert_token_str("foo");
-//	assert_token_str("a\nb");
-//	assert_token_eof();
-//
-//	// Operator tests
-//	init_stream(NULL, ": := + += ++ < <= << <<=");
-//	assert_token(TOKEN_COLON);
-//	assert_token(TOKEN_COLON_ASSIGN);
-//	assert_token(TOKEN_ADD);
-//	assert_token(TOKEN_ADD_ASSIGN);
-//	assert_token(TOKEN_INC);
-//	assert_token(TOKEN_LT);
-//	assert_token(TOKEN_LTEQ);
-//	assert_token(TOKEN_LSHIFT);
-//	assert_token(TOKEN_LSHIFT_ASSIGN);
-//	assert_token_eof();
-//
-//	// Misc tests
-//	init_stream(NULL, "XY+(XY)_HELLO1,234+994");
-//	assert_token_name("XY");
-//	assert_token(TOKEN_ADD);
-//	assert_token(TOKEN_LPAREN);
-//	assert_token_name("XY");
-//	assert_token(TOKEN_RPAREN);
-//	assert_token_name("_HELLO1");
-//	assert_token(TOKEN_COMMA);
-//	assert_token_int(234);
-//	assert_token(TOKEN_ADD);
-//	assert_token_int(994);
-//	assert_token_eof();
-//}
 
 #undef assert_token
 #undef assert_token_name
